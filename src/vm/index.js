@@ -266,9 +266,9 @@ const voicemeeter = {
 
 };
 
-//Create setter function
-const parameterStripNames = ['mono', 'solo', 'mute', 'gain', 'gate', 'comp'];
-const parameterBusNames = ['mono', 'mute','gain','sel'];
+//Create Getters and Setters
+const parameterStripNames = ['mono', 'solo', 'mute', 'gain', 'gate', 'comp', 'limit', 'A1', , 'A2', 'A3', 'A4', 'A5', 'B1', 'B2', 'B3', 'reverb', 'delay'];
+const parameterBusNames = ['mono', 'mute','gain','sel', 'returnReverb', 'returnDelay'];
 
 parameterBusNames.forEach(name => {
   const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
@@ -279,6 +279,9 @@ parameterBusNames.forEach(name => {
     } else {
       voicemeeter._setParameter(InterfaceType.bus, name, busNumber, value)
     }
+  }
+  voicemeeter[`getBus${capitalizedName}`] = function (busNumber) {
+    return voicemeeter.getParameter(`Bus[${busNumber}].${name}`)
   }
 });
 
@@ -292,6 +295,9 @@ parameterStripNames.forEach(name => {
     } else {
       voicemeeter._setParameter(InterfaceType.strip, name, stripNumber, value)
     }
+  }
+  voicemeeter[`getStrip${capitalizedName}`] = function (stripNumber) {
+    return voicemeeter.getParameter(`Strip[${stripNumber}].${name}`)
   }
 
 });
