@@ -1,5 +1,5 @@
 {
-  "name": "midielectron",
+  "name": "midimacro",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -14,12 +14,14 @@
   "main": "background.js",
   "dependencies": {
     "core-js": "^3.6.5",
+    "debounce": "^1.2.0",
+    "electron-settings": "^4.0.2",
+    "ffi-napi": "^3.0.1",
+    "midi": "^1.0.0",
+    "ref-array-napi": "^1.2.1",
     "vue": "^2.6.11",
     "vuetify": "^2.2.11",
-    "ref-array-napi": "^1.2.1",
-    "ffi-napi": "^3.0.1",
-    "winreg": "^1.2.4",
-    "webmidi": "^2.5.1"
+    "winreg": "^1.2.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

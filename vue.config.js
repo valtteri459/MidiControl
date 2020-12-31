@@ -2,6 +2,13 @@ module.exports = {
   "transpileDependencies": [
     "vuetify"
   ],
+  pages: {
+    index: {
+      entry: 'src/main.js',
+      // template title tag needs to be <title><%= htmlWebpackPlugin.options.title %></title>
+      title: 'Midi Macro Manager',
+    },
+  },
   pluginOptions: {
     electronBuilder: {
       // List native deps here if they don't work

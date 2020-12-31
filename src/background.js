@@ -1,6 +1,65 @@
 'use strict'
 import { app, protocol, BrowserWindow } from 'electron'
+import debounce from 'debounce'
+import appConfig from 'electron-settings'
+appConfig.configure({atomicSave: false})
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
+import midi from './process_components/midi'
+midi.register()
+function windowStateKeeper(windowName) {
+  let window, windowState;
+  function setBounds() {
+    // Restore from appConfig
+    if (appConfig.has(`windowState.${windowName}`)) {
+      windowState = appConfig.getSync(`windowState.${windowName}`);
+      return;
+    }
+    // Default
+    windowState = {
+      x: undefined,
+      y: undefined,
+      width: 1000,
+      height: 800,
+    };
+  }
+  let lastSave = process.hrtime()
+  function inMs (hrtime) {
+    return (hrtime[0]* 1000000000 + hrtime[1]) / 1000000; // convert first to ns then to ms
+  }
+  function saveState() {
+    if (inMs(process.hrtime(lastSave)) > 200 )
+    iSaveState()
+    lastSave = process.hrtime()
+  }
+  function iSaveState() {
+    console.log('saving resized window')
+    if (!windowState.isMaximized) {
+      windowState = window.getBounds();
+    }
+    windowState.isMaximized = window.isMaximized();
+    try {
+    appConfig.set(`windowState.${windowName}`, windowState);
+    } catch (e) {
+
+    }
+  }
+  function track(win) {
+    window = win;
+    ['resize', 'move'].forEach(event => {
+      win.on(event, saveState);
+    });
+  }
+  setBounds();
+  return({
+    x: windowState.x,
+    y: windowState.y,
+    width: windowState.width,
+    height: windowState.height,
+    isMaximized: windowState.isMaximized,
+    track,
+  });
+}
+
 // import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
@@ -11,9 +70,12 @@ protocol.registerSchemesAsPrivileged([
 
 async function createWindow() {
   // Create the browser window.
+  const mainStateKeeper = windowStateKeeper('main')
   const win = new BrowserWindow({
-    width: 1000,
-    height: 600,
+    x: mainStateKeeper.x,
+    y: mainStateKeeper.y,
+    width: mainStateKeeper.width,
+    height: mainStateKeeper.height,
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
@@ -22,6 +84,8 @@ async function createWindow() {
       enableRemoteModule: true
     }
   })
+  mainStateKeeper.track(win)
+  midi.registerWindow(win)
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     await win.loadURL(process.env.WEBPACK_DEV_SERVER_URL)

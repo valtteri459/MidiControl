@@ -1,7 +1,7 @@
 /* eslint-disable */ 
 const ffi = require('ffi-napi');
 const electron = require('electron')
-const Registry = require('./winreg');
+const Registry = require('winreg');
 
 const ArrayType = require('ref-array-napi');
 const CharArray = ArrayType('char');
