@@ -2,10 +2,7 @@
 ## MIDI controller -> Macro mapper
 
 Features:
-- Map MIDI messages to functionalities on your PC
-- Send back MIDI messages to devices in response to other events
-- Control voicemeeter with a midi controller and send back midi signals to change lights or motorised sliders reactively from voicemeeter
-- Control other aspects of your computer like generic macros, soundboards etc
+- Work in progress, now mainly receives and logs midi messages and does stuff
 
 
 noteworthy info:
