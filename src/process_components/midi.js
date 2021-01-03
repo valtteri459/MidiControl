@@ -8,7 +8,6 @@ export default {
   inputs: [],
   midiOutput: new midi.output(),
   outputs: [],
-  sentvalues: {},
   register() {
     console.log('MIDI registered')
     for(let i = 0;i<this.midiInput.getPortCount();i++) {
@@ -41,11 +40,6 @@ export default {
     })
     this.inputs.map((input, i) => { 
       input.on('message', (deltaTime, message) => {
-        if(message[0] == 144) {
-          let valtosend = typeof this.sentvalues[message[1]] === 'undefined' ? 1 : this.sentvalues[message[1]]
-          this.outputs[2].sendMessage([144,message[1],valtosend])
-          this.sentvalues[message[1]] = (valtosend+1)%7
-        }
         if(this.win) {
           this.win.webContents.send('log', {deltaTime, device: i, message})
         }
