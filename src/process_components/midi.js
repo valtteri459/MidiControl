@@ -8,6 +8,9 @@ export default {
   inputs: [],
   midiOutput: new midi.output(),
   outputs: [],
+  send(device, command, note, value) {
+    this.outputs[device].sendMessage(command, note, value)
+  },
   register() {
     console.log('MIDI registered')
     for(let i = 0;i<this.midiInput.getPortCount();i++) {

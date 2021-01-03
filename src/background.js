@@ -32,7 +32,7 @@ function windowStateKeeper(windowName) {
     lastSave = process.hrtime()
   }
   function iSaveState() {
-    console.log('saving resized window')
+    //console.log('saving resized window')
     if (!windowState.isMaximized) {
       windowState = window.getBounds();
     }
