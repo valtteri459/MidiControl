@@ -3,14 +3,14 @@ export default {
   eventSources: {},
   eventListeners: [],
   registerEventSource(name) {
-    eventSources[name] = (data) => {
-      this.eventListeners.map(e => e.source === name).forEach(retobj => {
+    this.eventSources[name] = (data) => {
+      this.eventListeners.filter(e => e.source === name || e.source === "all").forEach(retobj => {
         retobj.listener(data)
       })
     }
-    return eventSources[name]
+    return this.eventSources[name]
   },
-  addListener(name, returnfunc) {
+  addListener(returnfunc, name = 'all') {
     this.eventListeners.push({
       source: name,
       listener: returnfunc

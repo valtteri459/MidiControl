@@ -1,15 +1,17 @@
 import midi from 'midi'
 import { ipcMain } from 'electron'
+import events from './events'
 
 export default {
   time: 0,
   win: null,
   midiInput: new midi.input(),
   inputs: [],
+  eventSender: events.registerEventSource('midi'),
   midiOutput: new midi.output(),
   outputs: [],
   send(device, command, note, value) {
-    this.outputs[device].sendMessage(command, note, value)
+    this.outputs[device].sendMessage([command, note, value])
   },
   register() {
     console.log('MIDI registered')
@@ -43,6 +45,7 @@ export default {
     })
     this.inputs.map((input, i) => { 
       input.on('message', (deltaTime, message) => {
+        this.eventSender({device: i, data: message})
         if(this.win) {
           this.win.webContents.send('log', {deltaTime, device: i, message})
         }

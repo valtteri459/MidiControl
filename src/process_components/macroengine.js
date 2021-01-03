@@ -3,12 +3,24 @@ import ds from './datastore'
 import e from './events'
 import midi from './midi'
 
+
+ds.init()
 export default {
   elisteners: [],
   dslisteners: [],
   currentConfig: {},
+  num: 0,
   init() {
-
+    /*console.log(ds.state)
+    ds.touch(['testing', 'path', 'traversing'])
+    console.log(ds.state)
+    */
+    ds.addListener((data) => {
+      this.datastore_trigger(data)
+    })
+    e.addListener((data) => {
+      this.event_trigger(data)
+    })
   },
   resetBinds() {
 
@@ -16,13 +28,16 @@ export default {
   load_config() {
 
   },
-  save_config() {
+  save_config(config) {
 
   },
-  event_trigger() {
+  initials() {
 
   },
-  datastore_trigger() {
+  event_trigger(event) {
+    //console.log('event trigger tripped', event)
+  },
+  datastore_trigger(dsevent) {
 
   }
 }

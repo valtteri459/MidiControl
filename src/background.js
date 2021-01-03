@@ -1,18 +1,20 @@
 'use strict'
 import { app, protocol, BrowserWindow } from 'electron'
-import debounce from 'debounce'
 import appConfig from 'electron-settings'
 appConfig.configure({atomicSave: false})
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import midi from './process_components/midi'
+import macroengine from './process_components/macroengine'
+console.log('config file location', appConfig.file())
 midi.register()
+macroengine.init()
 function windowStateKeeper(windowName) {
   let window, windowState;
   function setBounds() {
     // Restore from appConfig
-    if (appConfig.has(`windowState.${windowName}`)) {
+    if (appConfig.hasSync(`windowState.${windowName}`)) {
       windowState = appConfig.getSync(`windowState.${windowName}`);
-      return;
+      return windowState;
     }
     // Default
     windowState = {
@@ -21,6 +23,7 @@ function windowStateKeeper(windowName) {
       width: 1000,
       height: 800,
     };
+    return windowState
   }
   let lastSave = process.hrtime()
   function inMs (hrtime) {
@@ -38,9 +41,9 @@ function windowStateKeeper(windowName) {
     }
     windowState.isMaximized = window.isMaximized();
     try {
-    appConfig.set(`windowState.${windowName}`, windowState);
+      appConfig.set(`windowState.${windowName}`, windowState);
     } catch (e) {
-
+      console.log('saving failed', e)
     }
   }
   function track(win) {
@@ -49,7 +52,7 @@ function windowStateKeeper(windowName) {
       win.on(event, saveState);
     });
   }
-  setBounds();
+  setBounds()
   return({
     x: windowState.x,
     y: windowState.y,

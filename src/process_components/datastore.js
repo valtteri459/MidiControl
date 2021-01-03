@@ -2,7 +2,16 @@ console.log('datastore imported')
 let Datastore = {
   validator: null,
   state: null,
-  testfunc() {
+  touch(path) {
+    var rootref = this.state
+    path.forEach(elem => {
+      if(!rootref[elem]) {
+        rootref[elem] = {}
+      }
+      rootref = rootref[elem]
+    })
+  },
+  init() {
     let _this = this
     this.validator = {
       get(target, key) {

@@ -77,6 +77,9 @@ const voicemeeter = {
     }
     throw "running failed";
   },
+  needRefresh() {
+    return libvoicemeeter.VBVMR_IsParametersDirty();
+  },
   isParametersDirty(){
 
     const res = libvoicemeeter.VBVMR_IsParametersDirty();
