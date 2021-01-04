@@ -8,7 +8,9 @@ import vm from './voicemeeter'
 import appConfig from 'electron-settings'
 
 let testsource
-
+let utils = {
+  map: (value, x1, y1, x2, y2) => (value - x1) * (y2 - x2) / (y1 - x1) + x2
+}
 if(appConfig.hasSync('source')) {
   testsource = appConfig.getSync('source')
 } else {
@@ -74,7 +76,11 @@ export default {
   log(...msg) {
     console.log(...msg)
     if(this.win) {
-      this.win.webContents.send('log', {type: 'scriptlog', msg: msg})
+      try {
+        this.win.webContents.send('log', {type: 'scriptlog', msg: msg})
+      }catch(e) {
+        this.win.webContents.send('log', {type: 'scriptlog', msg: 'log error' + e})
+      }
     }
   },
   registerWindow(win){
@@ -106,7 +112,7 @@ export default {
   initials() {
     this.currentConfig.forEach(elem => {
       if(elem.initial) {
-        elem.initial({ midi, vm, ds, state: ds.state, log: this.log, win: this.win })
+        elem.initial({ midi, vm, ds, state: ds.state, log: this.log, win: this.win, utils})
       }
     })
   },
@@ -116,7 +122,7 @@ export default {
     this.currentConfig.forEach(elem => {
       elem.event_trigger.forEach(ele => {
         if(ele.triggers.some(trigger => evtString.startsWith(trigger))) {
-          ele.code({ event, midi, vm, ds, state: ds.state, log: this.log, win: this.win })
+          ele.code({ event, midi, vm, ds, state: ds.state, log: this.log, win: this.win, utils })
         }
       })
     })
@@ -131,7 +137,7 @@ export default {
     this.currentConfig.forEach(elem => {
       elem.state_trigger.forEach(ele => {
         if(ele.triggers.some(trigger => evtString.startsWith(trigger))) {
-          ele.code({ event, midi, vm, ds, state: ds.state, log: this.log, win: this.win })
+          ele.code({ event, midi, vm, ds, state: ds.state, log: this.log, win: this.win, utils })
         }
       })
     })

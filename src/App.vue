@@ -1,5 +1,11 @@
 <template>
   <v-app>
+    <v-overlay :value="loading">
+      <v-progress-circular
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+    </v-overlay>
     <v-navigation-drawer
       v-model="drawer"
       app
@@ -50,21 +56,20 @@
       </v-btn>
     </v-app-bar>
     <v-main>
-      {{script}}
-      <HelloWorld/>
+      <ScriptManager :script="script"/>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import ScriptManager from './components/ScriptManager';
 import { ipcRenderer } from 'electron'
 
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
+    ScriptManager,
   },
 
   data: () => ({
@@ -119,7 +124,9 @@ export default {
       await ipcRenderer.invoke('reloadMacros')
     },
     async saveScript() {
+      this.loading = true
       await ipcRenderer.invoke('setConfig', JSON.stringify(this.script))
+      this.loading = false
     },
     async getDeviceInfo () {
       this.idevcount = await ipcRenderer.invoke('getInputDeviceCount')

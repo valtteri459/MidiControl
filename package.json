@@ -18,8 +18,10 @@
     "electron-settings": "^4.0.2",
     "ffi-napi": "^3.0.1",
     "midi": "^1.0.0",
+    "prismjs": "^1.23.0",
     "ref-array-napi": "^1.2.1",
     "vue": "^2.6.11",
+    "vue-prism-editor": "^1.2.2",
     "vuetify": "^2.2.11",
     "winreg": "^1.2.4"
   },
