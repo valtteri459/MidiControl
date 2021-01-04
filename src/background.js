@@ -1,4 +1,5 @@
 'use strict'
+import './prototypes'
 import { app, protocol, BrowserWindow } from 'electron'
 import appConfig from 'electron-settings'
 appConfig.configure({atomicSave: false})

@@ -28,7 +28,7 @@ export default {
       //console.log('dsevent in general', path, key, value)
       if (path[0] === 'vm' && path.length >= 3) {
         if (this._readings[path[1]][path[2]][key] != value) {
-          console.log('contradicting value, committing', path, key, value, this._readings[path[1]][path[2]][key])
+          //console.log('contradicting value, committing', path, key, value, this._readings[path[1]][path[2]][key])
           switch (path[1]) {
             case 'strip':
               vm.stripSetters[key](path[2], value)

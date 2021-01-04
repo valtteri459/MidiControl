@@ -16,10 +16,10 @@ export default {
     ds.touch(['testing', 'path', 'traversing'])
     console.log(ds.state)
     */
-   setInterval(() => {
+   /*setInterval(() => {
      if (ds.exists('vm', 'strip', '1', 'mute'))
      ds.state.vm.strip[1].mute = !ds.state.vm.strip[1].mute
-   }, 1000)
+   }, 1000)*/
     ds.addListener((path, key, value) => {
       this.datastore_trigger(path, key, value)
     })
@@ -44,5 +44,8 @@ export default {
   },
   datastore_trigger(path, key, value) {
     //console.log('dsevent triggered', path, key, value)
+    if ([...path, key].equals('vm.strip.1.mute'.split('.'))) {
+      midi.send(2, 144, 1, value ? 3 : 1)
+    }
   }
 }
