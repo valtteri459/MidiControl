@@ -43,6 +43,8 @@ export default {
         }       
       }
     })
+    await vm.isParametersDirty()
+    await this.refreshStore()
     setInterval(async() => {
       if(await vm.isParametersDirty()) {
         await this.refreshStore()

@@ -2,10 +2,15 @@ console.log('datastore imported')
 let Datastore = {
   validator: null,
   state: null,
+  _touch(target, path) {
+    if(typeof target[path] == 'undefined')
+    target[path] = {}
+    return target[path]
+  },
   touch(path) {
-    var rootref = this.state
+    let rootref = this.state
     path.forEach(elem => {
-      if(!rootref[elem]) {
+      if(typeof rootref[elem] == 'undefined') {
         rootref[elem] = {}
       }
       rootref = rootref[elem]
@@ -25,6 +30,7 @@ let Datastore = {
         } else {
           return target[key];
         }*/
+        //_this._touch(target, key)
         return target[key]
       },
       set (target, key, value) {
@@ -48,6 +54,7 @@ let Datastore = {
       }
     }
     this.state = new Proxy({_path:[]}, this.validator)
+    console.log('datastore initialized')
   },
   listeners: [],
   addListener(returnfunc){

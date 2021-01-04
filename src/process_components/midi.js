@@ -45,7 +45,7 @@ export default {
     })
     this.inputs.map((input, i) => { 
       input.on('message', (deltaTime, message) => {
-        this.eventSender({device: i, data: message})
+        this.eventSender({type: 'midi', device: i, data: message, path: ['midi', i, message[1], message[0]], value: message[2]})
         if(this.win) {
           this.win.webContents.send('log', {deltaTime, device: i, message})
         }
