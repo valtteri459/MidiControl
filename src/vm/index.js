@@ -81,9 +81,6 @@ const voicemeeter = {
     }
     throw "running failed";
   },
-  needRefresh() {
-    return libvoicemeeter.VBVMR_IsParametersDirty();
-  },
   isParametersDirty(){
 
     const res = libvoicemeeter.VBVMR_IsParametersDirty();
@@ -290,8 +287,8 @@ parameterBusNames.forEach(name => {
   voicemeeter[`getBus${capitalizedName}`] = function (busNumber) {
     return voicemeeter.getParameter(`Bus[${busNumber}].${name}`)
   }
-  voicemeeter.busSetters[`setBus${capitalizedName}`] = voicemeeter[`setBus${capitalizedName}`]
-  voicemeeter.busGetters[`getBus${capitalizedName}`] = voicemeeter[`getBus${capitalizedName}`]
+  voicemeeter.busSetters[name] = voicemeeter[`setBus${capitalizedName}`]
+  voicemeeter.busGetters[name] = voicemeeter[`getBus${capitalizedName}`]
 });
 
 parameterStripNames.forEach(name => {
@@ -308,8 +305,8 @@ parameterStripNames.forEach(name => {
   voicemeeter[`getStrip${capitalizedName}`] = function (stripNumber) {
     return voicemeeter.getParameter(`Strip[${stripNumber}].${name}`)
   }
-  voicemeeter.stripSetters[`setStrip${capitalizedName}`] = [`setStrip${capitalizedName}`]
-  voicemeeter.stripGetters[`getStrip${capitalizedName}`] = [`getStrip${capitalizedName}`]
+  voicemeeter.stripSetters[name] = voicemeeter[`setStrip${capitalizedName}`]
+  voicemeeter.stripGetters[name] = voicemeeter[`getStrip${capitalizedName}`]
 
 });
 module.exports = voicemeeter;

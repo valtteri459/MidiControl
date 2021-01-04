@@ -11,6 +11,10 @@ let Datastore = {
       rootref = rootref[elem]
     })
   },
+  exists(...args) {
+    if(!this.state) return false
+    return typeof args.reduce((obj, level) => obj && obj[level], this.state) !== 'undefined'
+  },
   init() {
     let _this = this
     this.validator = {
@@ -34,10 +38,12 @@ let Datastore = {
           iValue._path = [...tpath, key]
           iValue = new Proxy(iValue, _this.validator)
         }
-        target[key] = iValue
-        _this.listeners.forEach(callback => {
-          callback(target._path, key, iValue)
-        })
+        if(iValue != target[key]) {
+          target[key] = iValue
+          _this.listeners.forEach(callback => {
+            callback(target._path, key, iValue)
+          })
+        }
         return true
       }
     }
@@ -57,6 +63,7 @@ let Datastore = {
     }
   }
 }
+Datastore.init()
 /*
 var person = {
   firstName: "alfred",

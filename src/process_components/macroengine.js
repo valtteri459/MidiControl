@@ -3,9 +3,9 @@ import ds from './datastore'
 import e from './events'
 import midi from './midi'
 import vm from './voicemeeter'
+
 vm.init()
 
-ds.init()
 export default {
   elisteners: [],
   dslisteners: [],
@@ -16,8 +16,12 @@ export default {
     ds.touch(['testing', 'path', 'traversing'])
     console.log(ds.state)
     */
-    ds.addListener((data) => {
-      this.datastore_trigger(data)
+   setInterval(() => {
+     if (ds.exists('vm', 'strip', '1', 'mute'))
+     ds.state.vm.strip[1].mute = !ds.state.vm.strip[1].mute
+   }, 1000)
+    ds.addListener((path, key, value) => {
+      this.datastore_trigger(path, key, value)
     })
     e.addListener((data) => {
       this.event_trigger(data)
@@ -38,7 +42,7 @@ export default {
   event_trigger(event) {
     //console.log('event trigger tripped', event)
   },
-  datastore_trigger(dsevent) {
-
+  datastore_trigger(path, key, value) {
+    //console.log('dsevent triggered', path, key, value)
   }
 }
