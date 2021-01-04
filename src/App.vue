@@ -1,43 +1,56 @@
 <template>
   <v-app>
+    <v-navigation-drawer
+      v-model="drawer"
+      app
+      right
+    >
+      <v-row>
+        <v-col xs12>
+          <v-btn @click="getDeviceInfo" color="primary">refresh</v-btn><br/>
+          input device count: {{idevcount}}<br/>
+          input device list:
+          <ul>
+            <li v-for="item in idevlist" :key="item.id">{{item.id}} {{item.name}}</li>
+          </ul><hr/>
+          output device count: {{odevcount}}<br/>
+          output device list: 
+          <ul>
+            <li v-for="item in odevlist" :key="item.id">{{item.id}} {{item.name}}</li>
+          </ul>
+          <hr/>
+          <v-btn @click="selectedtype = 'midi'">midi log</v-btn><v-btn @click="selectedtype = 'scriptlog'">scriptlog</v-btn>
+          <hr/>
+          <ul>
+            <li v-for="data in receivedData.filter(e => e.type == selectedtype)" :key="data.id">{{formatter(data)}}</li>
+          </ul>
+        </v-col>
+      </v-row>
+    </v-navigation-drawer>
     <v-app-bar
       app
       color="primary"
       dark
     >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
+      <v-toolbar-title>MidiControl</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
+      <v-btn text @click="saveScript">
+        <span class="mr-2">Save config</span>
+      </v-btn>
+      <v-btn text @click="getScript">
+        <span class="mr-2">Fetch config</span>
+      </v-btn>
+      <v-btn text @click="reload">
+        <span class="mr-2">Reload engine</span>
+      </v-btn>
+      <v-btn text @click="drawer = !drawer">
+        <span class="mr-2">{{drawer ? 'Hide' : 'Show'}} info</span>
       </v-btn>
     </v-app-bar>
-
     <v-main>
+      {{script}}
       <HelloWorld/>
     </v-main>
   </v-app>
@@ -45,6 +58,7 @@
 
 <script>
 import HelloWorld from './components/HelloWorld';
+import { ipcRenderer } from 'electron'
 
 export default {
   name: 'App',
@@ -54,7 +68,65 @@ export default {
   },
 
   data: () => ({
-    //
+    selectedtype: 'midi',
+    idevcount: 'unknown',
+    idevlist: [],
+    odevcount: 'unknown',
+    odevlist: [],
+    receivedData: [],
+    outlog: [],
+    outid: 0,
+    msgReceived: 0,
+    script: {},
+    loading: true,
+    drawer: false
   }),
+  async mounted() {
+    this.getScript()
+    this.getDeviceInfo()
+    ipcRenderer.on('log', (event, args) => {
+      if(args.type === 'midi') {
+        delete args.deltaTime
+        if(this.receivedData[0] && args.type == this.receivedData[0].type && args.message[1] == this.receivedData[0].message[1]) {
+          this.receivedData[0] = {id: this.receivedData[0].id, ...args}
+        } else {
+          this.receivedData.unshift({id: this.msgReceived++, ...args})
+        }
+      } else {
+        this.receivedData.unshift({id: this.msgReceived++, ...args})
+      }
+      
+      this.receivedData = this.receivedData.splice(0, 20)
+    })
+    //console.log(Object.keys(vm))
+  },
+  methods: {
+    formatter(data) {
+      if(data.type == 'midi') {
+        return `device ${data.device}: act[${data.message[0]}] note[${data.message[1]}] value[${data.message[2]}]`
+      } else if(data.type == 'scriptlog') {
+        return data.msg
+      } else {
+        return data
+      }
+    },
+    async getScript() {
+      this.loading = true
+      this.script = JSON.parse(await ipcRenderer.invoke('getConfig'))
+      this.loading = false
+    },
+    async reload() {
+      await ipcRenderer.invoke('reloadMacros')
+    },
+    async saveScript() {
+      await ipcRenderer.invoke('setConfig', JSON.stringify(this.script))
+    },
+    async getDeviceInfo () {
+      this.idevcount = await ipcRenderer.invoke('getInputDeviceCount')
+      this.idevlist = await ipcRenderer.invoke('getInputDeviceList')
+      this.odevcount = await ipcRenderer.invoke('getOutputDeviceCount')
+      this.odevlist = await ipcRenderer.invoke('getOutputDeviceList')
+    }
+  }
 };
 </script>
