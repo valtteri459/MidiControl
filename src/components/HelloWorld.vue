@@ -8,7 +8,7 @@
         output device count: {{odevcount}}<br/>
         output device list: {{odevlist}}<br/>
         <ul>
-          <li v-for="data in receivedData" :key="data.id">device {{data.device}} message {{data.message}}</li>
+          <li v-for="data in receivedData" :key="data.id">{{data}}</li>
         </ul>
       </v-col>
     </v-row>
