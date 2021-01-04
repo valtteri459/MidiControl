@@ -46,6 +46,10 @@ const voicemeeter = {
   isConfigured: false,    // True when configuration has been set
   outputDevices: [],
   inputDevices: [],
+  stripGetters: {},
+  stripSetters: {},
+  busGetters: {},
+  busSetters: {},
   type: 0,
   version: null,
   voicemeeterConfig: {},
@@ -286,6 +290,8 @@ parameterBusNames.forEach(name => {
   voicemeeter[`getBus${capitalizedName}`] = function (busNumber) {
     return voicemeeter.getParameter(`Bus[${busNumber}].${name}`)
   }
+  voicemeeter.busSetters[`setBus${capitalizedName}`] = voicemeeter[`setBus${capitalizedName}`]
+  voicemeeter.busGetters[`getBus${capitalizedName}`] = voicemeeter[`getBus${capitalizedName}`]
 });
 
 parameterStripNames.forEach(name => {
@@ -302,6 +308,8 @@ parameterStripNames.forEach(name => {
   voicemeeter[`getStrip${capitalizedName}`] = function (stripNumber) {
     return voicemeeter.getParameter(`Strip[${stripNumber}].${name}`)
   }
+  voicemeeter.stripSetters[`setStrip${capitalizedName}`] = [`setStrip${capitalizedName}`]
+  voicemeeter.stripGetters[`getStrip${capitalizedName}`] = [`getStrip${capitalizedName}`]
 
 });
 module.exports = voicemeeter;

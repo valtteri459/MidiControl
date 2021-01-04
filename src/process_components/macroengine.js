@@ -2,7 +2,8 @@ console.log('macroengine imported')
 import ds from './datastore'
 import e from './events'
 import midi from './midi'
-
+import vm from './voicemeeter'
+vm.init()
 
 ds.init()
 export default {
@@ -26,7 +27,7 @@ export default {
 
   },
   load_config() {
-
+    
   },
   save_config(config) {
 
