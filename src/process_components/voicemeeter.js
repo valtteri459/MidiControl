@@ -9,6 +9,22 @@ let state = store.state
 export default {
   ready: false,
   vm: vm,
+  looper: false,
+  async startVMListener() {
+    if(!this.looper) {
+      if(await vm.isParametersDirty()) {
+        await this.refreshStore()
+        this.ready = true
+      }
+      setInterval(async() => {
+        if(await vm.isParametersDirty()) {
+          await this.refreshStore()
+          this.ready = true
+        }
+      }, 100)
+      this.looper = true
+    }
+  },
   touch(obj, host) {
     if(!host[obj]) {
       host[obj] = {}
@@ -43,14 +59,6 @@ export default {
         }       
       }
     })
-    await vm.isParametersDirty()
-    await this.refreshStore()
-    setInterval(async() => {
-      if(await vm.isParametersDirty()) {
-        await this.refreshStore()
-        this.ready = true
-      }
-    }, 100)
     /**vm.stripGetters, vm.busGetters */
   },
   async refreshStore() {

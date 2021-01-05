@@ -59,11 +59,11 @@ export default {
     ipcMain.handle('setConfig', async (event, ...args) => {
       appConfig.setSync('source', args[0])
       this.source = args[0]
-      this.load_config()
+      await this.load_config()
       return true
     })
     ipcMain.handle('reloadMacros', async (event, ...args) => {
-      return this.load_config()
+      return await this.load_config()
     })
     ds.addListener((path, key, value) => {
       this.datastore_trigger(path, key, value)
@@ -72,6 +72,7 @@ export default {
       this.event_trigger(data)
     })
     this.load_config()
+
   },
   log(...msg) {
     console.log(...msg)
@@ -95,7 +96,7 @@ export default {
       return []
     }
   },
-  load_config() {
+  async load_config() {
     this.currentConfig = JSON.parse(this.source)
     this.currentConfig.forEach(elem => {
       elem.initial = elem.initial ? this.compile(elem.initial) : false
@@ -107,6 +108,7 @@ export default {
       })
       //elem.initial({test: 'test string passed via environment', log: console.log})
     });
+    await vm.startVMListener();
     this.initials();
   },
   initials() {
