@@ -56,7 +56,7 @@
       </v-btn>
     </v-app-bar>
     <v-main>
-      <ScriptManager :script="script"/>
+      <ScriptManager :script="script" :idevcount="idevcount" :idevlist="idevlist" :odevcount="odevcount" :odevlist="odevlist"/>
     </v-main>
   </v-app>
 </template>
