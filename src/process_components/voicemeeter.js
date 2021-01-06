@@ -50,7 +50,7 @@ export default {
               vm.stripSetters[key](path[2], value)
               break;
             case 'bus':
-              vm.stripSetters[key](path[2], value)
+              vm.busSetters[key](path[2], value)
               break;
             default: 
               console.log('FEATURE ' + path[1] + ' NOT IMPLEMENTED')

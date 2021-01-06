@@ -65,7 +65,7 @@
                   outlined
                   dense
                 ></v-combobox></v-col>
-                <v-col cols="6"><v-spacer></v-spacer><learner itext="midi send" @in="lightscript"></learner><v-btn @click="item.event_trigger.splice(iEv, 1)" style="float: right">del</v-btn></v-col>
+                <v-col cols="6"><v-spacer></v-spacer><learner itext="midi send" @in="e => lightscript(e, itemEv)"></learner><v-btn @click="item.state_trigger.splice(iEv, 1)" style="float: right">del</v-btn></v-col>
               </v-card-title>
               <v-card-text>
                 <div>
@@ -128,12 +128,16 @@ export default {
     addtrigger(e, triggerlist) {
       triggerlist.push(`midi.${e.device}.${e.note}.${e.action}`)
     },
-    lightscript(e) {
+    lightscript(e, obj) {
       let newdev = 0
       let newOut = this.odevlist.filter(ne => ne.name.startsWith(this.idevlist[e.device].name.slice(0, -2)))
       newdev = newOut[0] ? newOut[0].id : 0
-      clipboard.writeText(`midi.send(${newdev}, 144, ${e.note}, event.value ? 3 : 1)`)
-      this.snackbar = true
+      if (obj.code !== '') {
+        clipboard.writeText(`midi.send(${newdev}, 144, ${e.note}, event.value ? 3 : 1)`)
+        this.snackbar = true
+      } else {
+        obj.code = `midi.send(${newdev}, 144, ${e.note}, event.value ? 3 : 1)`
+      }
     }
   },
   computed: {
